@@ -1,5 +1,7 @@
 # LLMs Deployment
 The 4th course assignment of Introduction to Artificial Intelligence. Deploy and test the large language models on the ModelScope.
+![](assets/ModelScopeNotebook.png)
+
 # Environment Construction
 1. Starting the PAI-DSW CPU(8-core 32GB) environment and view Notebook.
 2. Click the Terminal icon to open the terminal command line environment.
