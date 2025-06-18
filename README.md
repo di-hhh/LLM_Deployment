@@ -39,7 +39,8 @@ cd /mnt/data
 ```
 cd /mnt/workspace
 ```
-2. Write instance codes and script run_qwen_cpu.py for inference.
+2.  Write instance codes
+- 2.1 Write the script run_qwen_cpu.py.
 ```
 from transformers import TextStreamer, AutoTokenizer, AutoModelForCausalLM
 # Local path of model storage
@@ -59,10 +60,42 @@ inputs = tokenizer(prompt, return_tensors="pt").input_ids
 streamer = TextStreamer(tokenizer)
 outputs = model.generate(inputs, streamer=streamer, max_new_tokens=300)
 ```
+- 2.2 Write the script chatglm.py.
+```
+import torch
+from transformers import AutoTokenizer, AutoModel
+# Local path of model storage
+model_name = "/mnt/data/chatglm3-6b"   
+prompt = "请你仔细理解这段两个人之间的对话话，回答一个问题：领导：你这是什么意思？小明：没什么意思，意思意思。领导：你这就不够意思了。小明：小意思，小意思。领导：你这人真有意思。小明：其实也没有别的意思。领导：那我就不好意思了。小明：是我不好意思。请问：以上“意思”分别是什么意思。"
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, eos_token=None, pad_token=None, unk_token=None)
+model = AutoModel.from_pretrained(model_name, trust_remote_code=True).eval()
+# Check if there is a GPU, use GPU if there is, otherwise use CPU
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = model.to(device)
+# Encode input text
+inputs = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
+# Set generation parameters
+generation_config = model.generation_config
+generation_config.max_length = 2048
+generation_config.temperature = 0.7
+generation_config.top_p = 0.95
+# Perform reasoning
+try:
+    response, history = model.chat(tokenizer, prompt, history=None)
+    print(response)
+except Exception as e:
+    print(f"Error generating response: {e}")
+```
 # Run Instance
-Enter the working directory `/mnt/workplace`. And run the Python instance.
+Enter the working directory `/mnt/workplace`. And run the instance.
+- 1. run Qwen-7B-Chat instance.
 ```
 python run_qwen_cpu.py
+```
+- 2. run ChatGLM3-6 instance.
+```
+python chatglm.py
 ```
 # Horizontal Comparative Analysis of LLMs
 According to the five sample questions and the output of two big language models (Wisdom Spectrum ChatGLM3-6B and Tongyi Qianwen Qwen-7B-Chat), we compare the two big language models horizontally.
