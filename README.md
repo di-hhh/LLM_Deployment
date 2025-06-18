@@ -72,6 +72,7 @@ According to the five sample questions and the output of two big language models
 - **ChatGLM3-6:**
   - Advantages: The answer is in-depth and logical.
   - Inadequate: The answer is lengthy and the language is rigid.
+For more details, please read the report hw4_2354283_黄迪.docx
 
 
 
